@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up Form</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Sign Up as <span id="role-title"></span></h1>
+    </header>
+    <main>
+        <section id="signup-form">
+            <form id="signup-form">
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" required>
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+                <label for="phoneNumber">Phone Number:</label>
+                <input type="text" id="phoneNumber" required>
+                <label for="username">Username:</label>
+                <input type="text" id="username" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" required>
+                <!-- Coach-specific fields -->
+                <div id="coach-fields" style="display: none;">
+                    <label for="specialty">Specialty:</label>
+                    <input type="text" id="specialty">
+                </div>
+                <!-- Client-specific fields -->
+                <div id="client-fields" style="display: none;">
+                    <label for="age">Age:</label>
+                    <input type="number" id="age">
+                    <label for="gender">Gender:</label>
+                    <input type="text" id="gender">
+                    <label for="startDate">Start Date:</label>
+                    <input type="date" id="startDate">
+                </div>
+                <button type="submit">Sign Up</button>
+            </form>
+        </section>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const role = urlParams.get("role");
+            const roleTitle = document.getElementById("role-title");
+
+            if (roleTitle) {
+                roleTitle.textContent = capitalize(role);
+            }
+
+            // Show role-specific fields
+            if (role === "coach") {
+                document.getElementById("coach-fields").style.display = "block";
+            } else if (role === "client") {
+                document.getElementById("client-fields").style.display = "block";
+            }
+
+            const signupForm = document.getElementById("signup-form");
+            if (signupForm) {
+                signupForm.addEventListener("submit", async (e) => {
+                    e.preventDefault();
+                    const firstName = document.getElementById("firstName").value;
+                    const lastName = document.getElementById("lastName").value;
+                    const email = document.getElementById("email").value;
+                    const phoneNumber = document.getElementById("phoneNumber").value;
+                    const username = document.getElementById("username").value;
+                    const password = document.getElementById("password").value;
+
+                    const data = {
+                        firstName,
+                        lastName,
+                        email,
+                        phoneNumber,
+                        username,
+                        password,
+                    };
+
+                    if (role === "coach") {
+                        data.specialty = document.getElementById("specialty").value;
+                    } else if (role === "client") {
+                        data.age = document.getElementById("age").value;
+                        data.gender = document.getElementById("gender").value;
+                        data.startDate = document.getElementById("startDate").value;
+                    }
+
+                    try {
+                        const response = await fetch(`http://localhost:5000/signup/${role}`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(data),
+                        });
+                        if (response.ok) {
+                            alert("Sign up successful!");
+                            // Redirect to the login page with the role parameter
+                            window.location.href = `login.html?role=${role}`;
+                        } else {
+                            alert("Error signing up. Please try again.");
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert("Error signing up. Please try again.");
+                    }
+                });
+            }
+
+            function capitalize(string) {
+                return string.charAt(0).toUpperCase() + string.slice(1);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Role</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Select Your Role</h1>
+    </header>
+    <main>
+        <section id="role-selection">
+            <h2>Choose Your Role</h2>
+            <button onclick="navigateToLogin('admin')">Admin</button>
+            <button onclick="navigateToLogin('client')">Client</button>
+            <button onclick="navigateToLogin('coach')">Coach</button>
+        </section>
+    </main>
+    <script>
+        function navigateToLogin(role) {
+            window.location.href = `login.html?role=${role}`;
+        }
+    </script>
+</body>
+</html>

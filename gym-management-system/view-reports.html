@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Reports</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Use the global styles -->
+    <style>
+        /* Add custom styles for the table */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4e6f7; /* Light purple background */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh; /* Ensure the body takes the full height of the viewport */
+        }
+        header {
+            background-color: #9c27b0; /* Purple header */
+            color: white;
+            padding: 1em;
+            text-align: center;
+            width: 100%;
+        }
+        main {
+            padding: 2em;
+            width: 90%; /* Adjust width to fit the table */
+            max-width: 1200px; /* Adjust as needed */
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px; /* Optional: Add rounded corners */
+            overflow-x: auto; /* Add horizontal scroll if the table overflows */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1em;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #9c27b0; /* Purple border */
+        }
+        th {
+            background-color: #9c27b0; /* Purple header */
+            color: white;
+        }
+        tr:hover {
+            background-color: #f4e6f7; /* Light purple hover */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>View Reports</h1>
+    </header>
+    <main>
+        <table id="reports-table">
+            <thead>
+                <tr>
+                    <th>Client ID</th>
+                    <th>Client Name</th>
+                    <th>Assigned Coach</th>
+                    <th>Training Plan Intensity</th>
+                    <th>Nutrition Plan Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Report data will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                // Fetch client data from the server
+                const clientsResponse = await fetch("http://localhost:5000/clients");
+                const clients = await clientsResponse.json();
+
+                // Fetch coaches data from the server
+                const coachesResponse = await fetch("http://localhost:5000/coaches");
+                const coaches = await coachesResponse.json();
+
+                // Fetch training plans data from the server
+                const trainingPlansResponse = await fetch("http://localhost:5000/training-plans");
+                const trainingPlans = await trainingPlansResponse.json();
+
+                // Fetch nutrition plans data from the server
+                const nutritionPlansResponse = await fetch("http://localhost:5000/nutrition-plans");
+                const nutritionPlans = await nutritionPlansResponse.json();
+
+                const tableBody = document.querySelector("#reports-table tbody");
+
+                // Populate the table with client data
+                clients.forEach(client => {
+                    // Find the assigned coach's name
+                    const assignedCoach = coaches.find(coach => coach.CoachID === client.AssignedCoachID);
+                    const coachName = assignedCoach ? `${assignedCoach.FirstName} ${assignedCoach.LastName}` : "N/A";
+
+                    // Find the training plan details
+                    const trainingPlan = trainingPlans.find(plan => plan.TrainingID === client.TPID);
+                    const trainingPlanIntensity = trainingPlan ? `Intensity: ${trainingPlan.Intensity1to10}` : "N/A";
+
+                    // Find the nutrition plan details
+                    const nutritionPlan = nutritionPlans.find(plan => plan.NutritionID === client.NPID);
+                    const nutritionPlanType = nutritionPlan ? nutritionPlan.planType : "N/A";
+
+                    // Create a row for the client
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${client.ClientID}</td>
+                        <td>${client.FirstName} ${client.LastName}</td>
+                        <td>${coachName}</td>
+                        <td>${trainingPlanIntensity}</td>
+                        <td>${nutritionPlanType}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (err) {
+                console.error("Error fetching data:", err);
+                alert("Error fetching data. Please try again.");
+            }
+        });
+    </script>
+</body>
+</html>

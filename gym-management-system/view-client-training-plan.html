@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Training Plan</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4e6f7; /* Light purple background */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        header {
+            background-color: #9c27b0; /* Purple header */
+            color: white;
+            padding: 1em;
+            text-align: center;
+            width: 100%;
+        }
+        main {
+            padding: 2em;
+            width: 90%;
+            max-width: 600px;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            text-align: left;
+        }
+        h2 {
+            color: #4a148c; /* Dark purple text */
+        }
+        p {
+            font-size: 1.1em;
+            color: #4a148c; /* Dark purple text */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>View Training Plan</h1>
+    </header>
+    <main>
+        <h2>Training Plan Details</h2>
+        <p><strong>Intensity (1-10):</strong> <span id="intensity"></span></p>
+        <p><strong>Days Per Week:</strong> <span id="daysPerWeek"></span></p>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                // Fetch the logged-in client's ID from sessionStorage
+                const clientID = sessionStorage.getItem("userID");
+
+                if (!clientID) {
+                    alert("Client ID not found. Please log in again.");
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                // Fetch the client's assigned training plan
+                const response = await fetch(`http://localhost:5000/client-training-plan/${clientID}`);
+                const trainingPlan = await response.json();
+
+                // Display the training plan details
+                document.getElementById("intensity").textContent = trainingPlan.Intensity1to10;
+                document.getElementById("daysPerWeek").textContent = trainingPlan.DaysPerWeek;
+            } catch (err) {
+                console.error("Error fetching training plan:", err);
+                alert("Error fetching training plan. Please try again.");
+            }
+        });
+    </script>
+</body>
+</html>

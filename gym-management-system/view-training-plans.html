@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Training Plans</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4e6f7; /* Light purple background */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        header {
+            background-color: #9c27b0; /* Purple header */
+            color: white;
+            padding: 1em;
+            text-align: center;
+            width: 100%;
+        }
+        main {
+            padding: 2em;
+            width: 90%;
+            max-width: 1200px;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1em;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #9c27b0; /* Purple border */
+        }
+        th {
+            background-color: #9c27b0; /* Purple header */
+            color: white;
+        }
+        tr:hover {
+            background-color: #f4e6f7; /* Light purple hover */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>View Training Plans</h1>
+    </header>
+    <main>
+        <table id="training-plans-table">
+            <thead>
+                <tr>
+                    <th>Training ID</th>
+                    <th>Intensity (1-10)</th>
+                    <th>Days Per Week</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Training plan data will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                // Fetch training plans data from the server
+                const response = await fetch("http://localhost:5000/training-plans");
+                const trainingPlans = await response.json();
+
+                const tableBody = document.querySelector("#training-plans-table tbody");
+
+                // Populate the table with training plan data
+                trainingPlans.forEach(plan => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${plan.TrainingID}</td>
+                        <td>${plan.Intensity1to10}</td>
+                        <td>${plan.DaysPerWeek}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (err) {
+                console.error("Error fetching training plans:", err);
+                alert("Error fetching training plans. Please try again.");
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+/* styles.css */
+
+/* General Styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f4e6f7; /* Light purple background */
+    font-family: Arial, sans-serif;
+    color: #4a148c; /* Dark purple text */
+}
+
+header {
+    background-color: #9c27b0; /* Purple header */
+    color: white;
+    padding: 1em;
+    text-align: center;
+    width: 100%;
+}
+
+main {
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
+    background-color: white;
+    padding: 2em;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 1em;
+}
+
+/* Welcome Page Styles */
+#welcome {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    margin-top: 2em;
+}
+
+#welcome button {
+    width: 100%;
+    padding: 1em;
+    background-color: #9c27b0; /* Purple button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+#welcome button:hover {
+    background-color: #7b1fa2; /* Darker purple on hover */
+}
+
+/* Login Role Selection Page */
+#role-selection {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    margin-top: 2em;
+}
+
+#role-selection button {
+    width: 100%;
+    padding: 1em;
+    background-color: #9c27b0; /* Purple button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+#role-selection button:hover {
+    background-color: #7b1fa2; /* Darker purple on hover */
+}
+
+/* Sign Up Form Styles */
+#signup-form {
+    text-align: left;
+    margin-top: 2em;
+}
+
+#signup-form label {
+    display: block;
+    margin-bottom: 0.5em;
+    color: #4a148c; /* Dark purple text */
+}
+
+#signup-form input {
+    width: 100%;
+    padding: 0.5em;
+    margin-bottom: 1em;
+    border: 1px solid #9c27b0; /* Purple border */
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+#signup-form button {
+    width: 100%;
+    padding: 1em;
+    background-color: #9c27b0; /* Purple button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+#signup-form button:hover {
+    background-color: #7b1fa2; /* Darker purple on hover */
+}
+
+/* Dashboard-specific styles */
+.dashboard-content {
+    text-align: left;
+    margin-top: 2em;
+}
+
+.dashboard-content p {
+    font-size: 1.1em;
+    margin-bottom: 1.5em;
+    color: #4a148c; /* Dark purple text */
+}
+
+.dashboard-list {
+    list-style: none;
+    padding: 0;
+}
+
+.dashboard-list li {
+    margin-bottom: 1em;
+}
+
+.dashboard-list a {
+    display: block;
+    padding: 0.8em 1em;
+    background-color: #f4e6f7; /* Light purple background */
+    color: #4a148c; /* Dark purple text */
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.dashboard-list a:hover {
+    background-color: #e1bee7; /* Lighter purple on hover */
+}
+
+/* Dashboard Buttons */
+.dashboard-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    margin-top: 2em;
+}
+
+.dashboard-buttons button {
+    width: 100%;
+    padding: 1em;
+    background-color: #9c27b0; /* Purple button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.dashboard-buttons button:hover {
+    background-color: #7b1fa2; /* Darker purple on hover */
+}
+
+/* Login Form Styles */
+form label {
+    display: block;
+    text-align: left;
+    margin-bottom: 0.5em;
+    color: #4a148c; /* Dark purple text */
+}
+
+form input {
+    width: 100%;
+    padding: 0.5em;
+    margin: 0.5em 0;
+    border: 1px solid #9c27b0; /* Purple border */
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+form button {
+    margin-top: 1em;
+    background-color: #9c27b0; /* Purple button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #7b1fa2; /* Darker purple on hover */
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1em;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #9c27b0; /* Purple border */
+}
+
+th {
+    background-color: #9c27b0; /* Purple header */
+    color: white;
+}
+
+tr:hover {
+    background-color: #f4e6f7; /* Light purple hover */
+}
+
+/* Actions Buttons */
+.actions button {
+    padding: 6px 12px;
+    margin: 2px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.actions button.edit {
+    background-color: #4CAF50; /* Green for edit */
+    color: white;
+}
+
+.actions button.delete {
+    background-color: #f44336; /* Red for delete */
+    color: white;
+}
+
+.actions button:hover {
+    opacity: 0.8;
+}

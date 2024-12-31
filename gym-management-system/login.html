@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4e6f7; /* Light purple background */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        header {
+            background-color: #9c27b0; /* Purple header */
+            color: white;
+            padding: 1em;
+            text-align: center;
+            width: 100%;
+        }
+        main {
+            width: 90%;
+            max-width: 400px;
+            background-color: white;
+            padding: 2em;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        form label {
+            display: block;
+            margin-bottom: 0.5em;
+            color: #4a148c; /* Dark purple text */
+        }
+        form input {
+            width: 100%;
+            padding: 0.5em;
+            margin-bottom: 1em;
+            border: 1px solid #9c27b0; /* Purple border */
+            border-radius: 5px;
+        }
+        form button {
+            width: 100%;
+            padding: 1em;
+            background-color: #9c27b0; /* Purple button */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        form button:hover {
+            background-color: #7b1fa2; /* Darker purple on hover */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Login Page</h1>
+    </header>
+    <main>
+        <section id="login">
+            <h2 id="role-title"></h2>
+            <form id="login-form">
+                <label for="username">Username:</label>
+                <input type="text" id="username" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" required>
+                <button type="submit">Login</button>
+            </form>
+        </section>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const role = urlParams.get("role");
+            const roleTitle = document.getElementById("role-title");
+
+            if (roleTitle) {
+                roleTitle.textContent = `Login as ${capitalize(role)}`;
+            }
+
+            const loginForm = document.getElementById("login-form");
+            if (loginForm) {
+                loginForm.addEventListener("submit", async (e) => {
+                    e.preventDefault();
+                    const username = document.getElementById("username").value;
+                    const password = document.getElementById("password").value;
+
+                    if (username && password) {
+                        try {
+                            const response = await fetch(`http://localhost:5000/login`, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({ username, password, role }),
+                            });
+
+                            if (response.ok) {
+                                const data = await response.json();
+                                if (data.success) {
+                                    // Store the logged-in user's ID in sessionStorage
+                                    sessionStorage.setItem("userID", data.id);
+                                    sessionStorage.setItem("role", role);
+
+                                    // Redirect to the appropriate dashboard
+                                    if (role === "admin") {
+                                        window.location.href = "admin-dashboard.html";
+                                    } else if (role === "client") {
+                                        window.location.href = "client-dashboard.html";
+                                    } else if (role === "coach") {
+                                        window.location.href = "coach-dashboard.html";
+                                    }
+                                } else {
+                                    alert("Invalid username or password.");
+                                }
+                            } else {
+                                alert("Error during login. Please try again.");
+                            }
+                        } catch (err) {
+                            console.error("Error during login:", err);
+                            alert("Error during login. Please try again.");
+                        }
+                    } else {
+                        alert("Please enter valid credentials.");
+                    }
+                });
+            }
+
+            function capitalize(string) {
+                return string.charAt(0).toUpperCase() + string.slice(1);
+            }
+        });
+    </script>
+</body>
+</html>

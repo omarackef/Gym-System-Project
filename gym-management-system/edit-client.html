@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Client</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Edit Client</h1>
+    </header>
+    <main>
+        <form id="edit-client-form">
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" required>
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" required>
+            <label for="age">Age:</label>
+            <input type="number" id="age" required>
+            <label for="gender">Gender:</label>
+            <input type="text" id="gender" required>
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+            <label for="phoneNumber">Phone Number:</label>
+            <input type="text" id="phoneNumber" required>
+            <label for="assignedCoachID">Assigned Coach ID:</label>
+            <input type="number" id="assignedCoachID" required>
+            <label for="npID">Nutrition Plan ID:</label>
+            <input type="number" id="npID" required>
+            <label for="tpID">Training Plan ID:</label>
+            <input type="number" id="tpID" required>
+            <label for="membershipStatus">Membership Status:</label>
+            <input type="text" id="membershipStatus" required>
+            <button type="submit">Save Changes</button>
+        </form>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const clientID = urlParams.get("clientID");
+
+            if (!clientID) {
+                alert("Client ID is missing.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5000/clients/${clientID}`);
+                if (!response.ok) {
+                    throw new Error("Failed to fetch client data.");
+                }
+
+                const client = await response.json();
+
+                // Populate the form with client data
+                document.getElementById("firstName").value = client.FirstName;
+                document.getElementById("lastName").value = client.LastName;
+                document.getElementById("age").value = client.Age;
+                document.getElementById("gender").value = client.Gender;
+                document.getElementById("startDate").value = new Date(client.StartDate).toISOString().split('T')[0];
+                document.getElementById("email").value = client.Email;
+                document.getElementById("phoneNumber").value = client.PhoneNumber;
+                document.getElementById("assignedCoachID").value = client.AssignedCoachID;
+                document.getElementById("npID").value = client.NPID;
+                document.getElementById("tpID").value = client.TPID;
+                document.getElementById("membershipStatus").value = client.MembershipStatus;
+            } catch (err) {
+                console.error("Error fetching client data:", err);
+                alert("Error fetching client data. Please try again.");
+            }
+
+            // Handle form submission
+            const editForm = document.getElementById("edit-client-form");
+            if (editForm) {
+                editForm.addEventListener("submit", async (e) => {
+                    e.preventDefault();
+                    const updatedClient = {
+                        firstName: document.getElementById("firstName").value,
+                        lastName: document.getElementById("lastName").value,
+                        age: document.getElementById("age").value,
+                        gender: document.getElementById("gender").value,
+                        startDate: document.getElementById("startDate").value,
+                        email: document.getElementById("email").value,
+                        phoneNumber: document.getElementById("phoneNumber").value,
+                        assignedCoachID: document.getElementById("assignedCoachID").value,
+                        npID: document.getElementById("npID").value,
+                        tpID: document.getElementById("tpID").value,
+                        membershipStatus: document.getElementById("membershipStatus").value,
+                    };
+
+                    try {
+                        const response = await fetch(`http://localhost:5000/clients/${clientID}`, {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(updatedClient),
+                        });
+
+                        if (response.ok) {
+                            alert("Client updated successfully!");
+                            window.location.href = "manage-clients.html";
+                        } else {
+                            alert("Error updating client.");
+                        }
+                    } catch (err) {
+                        console.error("Error updating client:", err);
+                        alert("Error updating client. Please try again.");
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

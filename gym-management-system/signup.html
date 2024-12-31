@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Sign Up</h1>
+    </header>
+    <main>
+        <section id="role-selection">
+            <h2>Select Your Role</h2>
+            <button onclick="navigateToSignup('client')">Client</button>
+            <button onclick="navigateToSignup('coach')">Coach</button>
+        </section>
+    </main>
+    <script>
+        function navigateToSignup(role) {
+            window.location.href = `signup-form.html?role=${role}`;
+        }
+    </script>
+</body>
+</html>

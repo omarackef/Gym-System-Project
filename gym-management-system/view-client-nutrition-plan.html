@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Nutrition Plan</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4e6f7; /* Light purple background */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        header {
+            background-color: #9c27b0; /* Purple header */
+            color: white;
+            padding: 1em;
+            text-align: center;
+            width: 100%;
+        }
+        main {
+            padding: 2em;
+            width: 90%;
+            max-width: 600px;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            text-align: left;
+        }
+        h2 {
+            color: #4a148c; /* Dark purple text */
+        }
+        p {
+            font-size: 1.1em;
+            color: #4a148c; /* Dark purple text */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>View Nutrition Plan</h1>
+    </header>
+    <main>
+        <h2>Nutrition Plan Details</h2>
+        <p><strong>Calories:</strong> <span id="calories"></span></p>
+        <p><strong>Protein (g):</strong> <span id="protein"></span></p>
+        <p><strong>Carbs (g):</strong> <span id="carbs"></span></p>
+        <p><strong>Fat (g):</strong> <span id="fat"></span></p>
+        <p><strong>Plan Type:</strong> <span id="planType"></span></p>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                // Fetch the logged-in client's ID from sessionStorage
+                const clientID = sessionStorage.getItem("userID");
+
+                if (!clientID) {
+                    alert("Client ID not found. Please log in again.");
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                // Fetch the client's assigned nutrition plan
+                const response = await fetch(`http://localhost:5000/client-nutrition-plan/${clientID}`);
+                const nutritionPlan = await response.json();
+
+                // Display the nutrition plan details
+                document.getElementById("calories").textContent = nutritionPlan.Calories;
+                document.getElementById("protein").textContent = nutritionPlan.Protein;
+                document.getElementById("carbs").textContent = nutritionPlan.Carbs;
+                document.getElementById("fat").textContent = nutritionPlan.Fat;
+                document.getElementById("planType").textContent = nutritionPlan.planType;
+            } catch (err) {
+                console.error("Error fetching nutrition plan:", err);
+                alert("Error fetching nutrition plan. Please try again.");
+            }
+        });
+    </script>
+</body>
+</html>

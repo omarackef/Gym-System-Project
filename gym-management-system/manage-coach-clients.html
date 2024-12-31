@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Your Clients' Profiles</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4e6f7; /* Light purple background */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        header {
+            background-color: #9c27b0; /* Purple header */
+            color: white;
+            padding: 1em;
+            text-align: center;
+            width: 100%;
+        }
+        main {
+            padding: 2em;
+            width: 90%;
+            max-width: 1200px;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1em;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #9c27b0; /* Purple border */
+        }
+        th {
+            background-color: #9c27b0; /* Purple header */
+            color: white;
+        }
+        tr:hover {
+            background-color: #f4e6f7; /* Light purple hover */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Manage Your Clients' Profiles</h1>
+    </header>
+    <main>
+        <table id="clients-table">
+            <thead>
+                <tr>
+                    <th>Client ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Membership Status</th>
+                    <th>Training Plan ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Client data will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                // Fetch the logged-in coach's ID from sessionStorage
+                const coachID = sessionStorage.getItem("userID");
+
+                if (!coachID) {
+                    alert("Coach ID not found. Please log in again.");
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                // Fetch clients assigned to the logged-in coach
+                const response = await fetch(`http://localhost:5000/clients?coachID=${coachID}`);
+                const clients = await response.json();
+
+                const tableBody = document.querySelector("#clients-table tbody");
+
+                // Populate the table with client data
+                clients.forEach(client => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${client.ClientID}</td>
+                        <td>${client.FirstName}</td>
+                        <td>${client.LastName}</td>
+                        <td>${client.Email}</td>
+                        <td>${client.PhoneNumber}</td>
+                        <td>${client.MembershipStatus}</td>
+                        <td>${client.TPID}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (err) {
+                console.error("Error fetching clients:", err);
+                alert("Error fetching clients. Please try again.");
+            }
+        });
+    </script>
+</body>
+</html>

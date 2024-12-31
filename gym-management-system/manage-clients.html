@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Clients</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Use the global styles -->
+    <style>
+        /* Add custom styles for the table */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4e6f7; /* Light purple background */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh; /* Ensure the body takes the full height of the viewport */
+        }
+        header {
+            background-color: #9c27b0; /* Purple header */
+            color: white;
+            padding: 1em;
+            text-align: center;
+            width: 100%;
+        }
+        main {
+            padding: 2em;
+            width: 90%; /* Adjust width to fit the table */
+            max-width: 1200px; /* Adjust as needed */
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px; /* Optional: Add rounded corners */
+            overflow-x: auto; /* Add horizontal scroll if the table overflows */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1em;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #9c27b0; /* Purple border */
+        }
+        th {
+            background-color: #9c27b0; /* Purple header */
+            color: white;
+        }
+        tr:hover {
+            background-color: #f4e6f7; /* Light purple hover */
+        }
+        .actions button {
+            padding: 6px 12px;
+            margin: 2px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .actions button.edit {
+            background-color: #4CAF50; /* Green for edit */
+            color: white;
+        }
+        .actions button.delete {
+            background-color: #f44336; /* Red for delete */
+            color: white;
+        }
+        .actions button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Manage Client Profiles</h1>
+    </header>
+    <main>
+        <table id="clients-table">
+            <thead>
+                <tr>
+                    <th>Client ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Age</th>
+                    <th>Gender</th>
+                    <th>Start Date</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Assigned Coach ID</th>
+                    <th>Nutrition Plan ID</th>
+                    <th>Training Plan ID</th>
+                    <th>Membership Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Client records will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            // Fetch client data from the server
+            try {
+                const response = await fetch("http://localhost:5000/clients");
+                const clients = await response.json();
+
+                const tableBody = document.querySelector("#clients-table tbody");
+
+                // Populate the table with client data
+                clients.forEach(client => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${client.ClientID}</td>
+                        <td>${client.FirstName}</td>
+                        <td>${client.LastName}</td>
+                        <td>${client.Age}</td>
+                        <td>${client.Gender}</td>
+                        <td>${new Date(client.StartDate).toLocaleDateString()}</td>
+                        <td>${client.Email}</td>
+                        <td>${client.PhoneNumber}</td>
+                        <td>${client.AssignedCoachID}</td>
+                        <td>${client.NPID}</td>
+                        <td>${client.TPID}</td>
+                        <td>${client.MembershipStatus}</td>
+                        <td class="actions">
+                            <button class="edit" onclick="editClient(${client.ClientID})">Edit</button>
+                            <button class="delete" onclick="deleteClient(${client.ClientID})">Delete</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (err) {
+                console.error("Error fetching clients:", err);
+                alert("Error fetching clients. Please try again.");
+            }
+        });
+
+        // Function to delete a client
+        async function deleteClient(clientID) {
+            if (confirm("Are you sure you want to delete this client?")) {
+                try {
+                    const response = await fetch(`http://localhost:5000/clients/${clientID}`, {
+                        method: "DELETE",
+                    });
+                    if (response.ok) {
+                        alert("Client deleted successfully!");
+                        window.location.reload(); // Refresh the page to update the table
+                    } else {
+                        alert("Error deleting client.");
+                    }
+                } catch (err) {
+                    console.error("Error deleting client:", err);
+                    alert("Error deleting client. Please try again.");
+                }
+            }
+        }
+
+        // Function to edit a client (redirect to an edit page)
+        function editClient(clientID) {
+            window.location.href = `edit-client.html?clientID=${clientID}`;
+        }
+    </script>
+</body>
+</html>
