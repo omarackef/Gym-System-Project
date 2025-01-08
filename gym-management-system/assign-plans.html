@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Plans</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Your existing CSS styles */
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Assign Plans</h1>
+    </header>
+    <main>
+        <form id="assign-plans-form">
+            <label for="training-plan">Training Plan:</label>
+            <select id="training-plan" required>
+                <!-- Options will be dynamically populated -->
+            </select>
+
+            <label for="nutrition-plan">Nutrition Plan:</label>
+            <select id="nutrition-plan" required>
+                <!-- Options will be dynamically populated -->
+            </select>
+
+            <button type="submit">Assign Plans</button>
+        </form>
+        <div id="error-message" class="error-message"></div>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                // Fetch the client ID from the URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const clientID = urlParams.get("clientID");
+
+                if (!clientID) {
+                    throw new Error("Client ID is missing.");
+                }
+
+                // Fetch all training plans
+                const trainingPlansResponse = await fetch("http://localhost:5000/training-plans");
+                if (!trainingPlansResponse.ok) {
+                    throw new Error("Failed to fetch training plans.");
+                }
+                const trainingPlans = await trainingPlansResponse.json();
+
+                // Fetch all nutrition plans
+                const nutritionPlansResponse = await fetch("http://localhost:5000/nutrition-plans");
+                if (!nutritionPlansResponse.ok) {
+                    throw new Error("Failed to fetch nutrition plans.");
+                }
+                const nutritionPlans = await nutritionPlansResponse.json();
+
+                // Populate the training plan dropdown
+                const trainingPlanDropdown = document.getElementById("training-plan");
+                trainingPlans.forEach(plan => {
+                    const option = document.createElement("option");
+                    option.value = plan.TrainingID;
+                    option.textContent = `Training Plan ${plan.TrainingID} (Intensity: ${plan.Intensity1to10}, Days: ${plan.DaysPerWeek})`;
+                    trainingPlanDropdown.appendChild(option);
+                });
+
+                // Populate the nutrition plan dropdown
+                const nutritionPlanDropdown = document.getElementById("nutrition-plan");
+                nutritionPlans.forEach(plan => {
+                    const option = document.createElement("option");
+                    option.value = plan.NutritionID;
+                    option.textContent = `Nutrition Plan ${plan.NutritionID} (Calories: ${plan.Calories}, Protein: ${plan.Protein}g)`;
+                    nutritionPlanDropdown.appendChild(option);
+                });
+
+                // Handle form submission
+                const assignPlansForm = document.getElementById("assign-plans-form");
+                assignPlansForm.addEventListener("submit", async (e) => {
+                    e.preventDefault();
+
+                    const selectedTrainingPlan = trainingPlanDropdown.value;
+                    const selectedNutritionPlan = nutritionPlanDropdown.value;
+
+                    try {
+                        // Send only tpID and npID to the server
+                        const response = await fetch(`http://localhost:5000/clients/${clientID}/plans`, {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                tpID: selectedTrainingPlan,
+                                npID: selectedNutritionPlan,
+                            }),
+                        });
+
+                        const responseData = await response.json();
+
+                        if (response.ok) {
+                            alert(responseData.message || "Plans assigned successfully!");
+                            window.location.href = "manage-coach-clients.html"; // Redirect back to the manage clients page
+                        } else {
+                            throw new Error(responseData.message || "Error assigning plans.");
+                        }
+                    } catch (err) {
+                        console.error("Error assigning plans:", err);
+                        const errorMessageElement = document.getElementById("error-message");
+                        errorMessageElement.textContent = `Error: ${err.message}`;
+                    }
+                });
+            } catch (err) {
+                console.error("Error:", err);
+                const errorMessageElement = document.getElementById("error-message");
+                errorMessageElement.textContent = `Error: ${err.message}`;
+            }
+        });
+    </script>
+</body>
+</html>

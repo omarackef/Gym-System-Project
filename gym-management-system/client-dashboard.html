@@ -39,6 +39,20 @@
         .membership-buttons button.re-register {
             background-color: #4CAF50; /* Green for re-register */
         }
+        .membership-buttons button:disabled {
+            opacity: 0.5; /* Dim out the button */
+            cursor: not-allowed; /* Change cursor to indicate disabled state */
+        }
+        .subscription-info {
+            margin-top: 1em;
+            font-size: 1.1em;
+            color: #4a148c; /* Dark purple text */
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+            margin-top: 1em;
+        }
     </style>
 </head>
 <body>
@@ -47,16 +61,74 @@
     </header>
     <main>
         <p>Track your progress and view your plans here.</p>
+        <div class="subscription-info">
+            <strong>Days Subscribed:</strong> <span id="days-subscribed">Loading...</span>
+        </div>
         <div class="dashboard-buttons">
             <button onclick="window.location.href='view-client-training-plan.html'">View Training Plan</button>
             <button onclick="window.location.href='view-client-nutrition-plan.html'">View Nutrition Plan</button>
             <div class="membership-buttons">
-                <button class="cancel" onclick="cancelMembership()">Cancel Membership</button>
-                <button class="re-register" onclick="reRegister()">Re-Register</button>
+                <button class="cancel" id="cancel-membership-btn" onclick="cancelMembership()">Cancel Membership</button>
+                <button class="re-register" id="re-register-btn" onclick="reRegister()">Re-Register</button>
             </div>
         </div>
+        <div id="error-message" class="error-message"></div>
     </main>
     <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                // Fetch the logged-in client's ID from sessionStorage
+                const clientID = sessionStorage.getItem("userID");
+                console.log("Client ID:", clientID); // Debugging line
+
+                if (!clientID) {
+                    alert("Client ID not found. Please log in again.");
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                // Fetch the client's data from the server
+                const response = await fetch(`http://localhost:5000/clients/${clientID}`);
+                console.log("Response Status:", response.status); // Debugging line
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch client data: ${response.statusText}`);
+                }
+
+                const client = await response.json();
+                console.log("Client Data:", client); // Debugging line
+
+                // Calculate the number of days subscribed
+                const startDate = new Date(client.StartDate);
+                const currentDate = new Date();
+                const timeDifference = currentDate - startDate;
+                const daysSubscribed = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+
+                // Display the number of days subscribed
+                const daysSubscribedElement = document.getElementById("days-subscribed");
+                daysSubscribedElement.textContent = daysSubscribed;
+
+                // Get the membership status
+                const membershipStatus = client.MembershipStatus;
+
+                // Get the buttons
+                const cancelMembershipBtn = document.getElementById("cancel-membership-btn");
+                const reRegisterBtn = document.getElementById("re-register-btn");
+
+                // Disable buttons based on membership status
+                if (membershipStatus === "Cancelled" || membershipStatus === "Expired") {
+                    cancelMembershipBtn.disabled = true; // Dim out the Cancel Membership button
+                } else if (membershipStatus === "Active") {
+                    reRegisterBtn.disabled = true; // Dim out the Re-Register button
+                }
+            } catch (err) {
+                console.error("Error fetching client data:", err);
+                // Display the error message on the page
+                const errorMessageElement = document.getElementById("error-message");
+                errorMessageElement.textContent = `Error: ${err.message}`;
+            }
+        });
+
         async function cancelMembership() {
             try {
                 const clientID = sessionStorage.getItem("userID");
@@ -75,7 +147,7 @@
                     alert("Membership cancelled successfully!");
                     window.location.reload(); // Refresh the page to update the UI
                 } else {
-                    alert("Error cancelling membership.");
+                    throw new Error("Error cancelling membership.");
                 }
             } catch (err) {
                 console.error("Error cancelling membership:", err);
@@ -101,7 +173,7 @@
                     alert("Re-registration successful! Membership status set to Active.");
                     window.location.reload(); // Refresh the page to update the UI
                 } else {
-                    alert("Error re-registering.");
+                    throw new Error("Error re-registering.");
                 }
             } catch (err) {
                 console.error("Error re-registering:", err);

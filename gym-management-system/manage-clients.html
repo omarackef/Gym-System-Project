@@ -4,22 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Clients</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Use the global styles -->
+    <link rel="stylesheet" href="styles.css">
     <style>
-        /* Add custom styles for the table */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4e6f7; /* Light purple background */
+            background-color: #f4e6f7;
             margin: 0;
             padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh; /* Ensure the body takes the full height of the viewport */
+            min-height: 100vh;
         }
         header {
-            background-color: #9c27b0; /* Purple header */
+            background-color: #9c27b0;
             color: white;
             padding: 1em;
             text-align: center;
@@ -27,12 +26,12 @@
         }
         main {
             padding: 2em;
-            width: 90%; /* Adjust width to fit the table */
-            max-width: 1200px; /* Adjust as needed */
+            width: 90%;
+            max-width: 1200px;
             background-color: white;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 8px; /* Optional: Add rounded corners */
-            overflow-x: auto; /* Add horizontal scroll if the table overflows */
+            border-radius: 8px;
+            overflow-x: auto;
         }
         table {
             width: 100%;
@@ -42,14 +41,14 @@
         th, td {
             padding: 12px;
             text-align: left;
-            border-bottom: 1px solid #9c27b0; /* Purple border */
+            border-bottom: 1px solid #9c27b0;
         }
         th {
-            background-color: #9c27b0; /* Purple header */
+            background-color: #9c27b0;
             color: white;
         }
         tr:hover {
-            background-color: #f4e6f7; /* Light purple hover */
+            background-color: #f4e6f7;
         }
         .actions button {
             padding: 6px 12px;
@@ -60,11 +59,11 @@
             font-size: 14px;
         }
         .actions button.edit {
-            background-color: #4CAF50; /* Green for edit */
+            background-color: #4CAF50;
             color: white;
         }
         .actions button.delete {
-            background-color: #f44336; /* Red for delete */
+            background-color: #f44336;
             color: white;
         }
         .actions button:hover {
@@ -88,7 +87,7 @@
                     <th>Start Date</th>
                     <th>Email</th>
                     <th>Phone Number</th>
-                    <th>Assigned Coach ID</th>
+                    <th>Assigned Coach</th>
                     <th>Nutrition Plan ID</th>
                     <th>Training Plan ID</th>
                     <th>Membership Status</th>
@@ -102,15 +101,23 @@
     </main>
     <script>
         document.addEventListener("DOMContentLoaded", async () => {
-            // Fetch client data from the server
             try {
-                const response = await fetch("http://localhost:5000/clients");
-                const clients = await response.json();
+                // Fetch client data from the server
+                const clientsResponse = await fetch("http://localhost:5000/clients");
+                const clients = await clientsResponse.json();
+
+                // Fetch coach data from the server
+                const coachesResponse = await fetch("http://localhost:5000/coaches");
+                const coaches = await coachesResponse.json();
 
                 const tableBody = document.querySelector("#clients-table tbody");
 
                 // Populate the table with client data
                 clients.forEach(client => {
+                    // Find the assigned coach's name
+                    const assignedCoach = coaches.find(coach => coach.CoachID === client.AssignedCoachID);
+                    const coachName = assignedCoach ? `${assignedCoach.FirstName} ${assignedCoach.LastName}` : "N/A";
+
                     const row = document.createElement("tr");
                     row.innerHTML = `
                         <td>${client.ClientID}</td>
@@ -121,7 +128,7 @@
                         <td>${new Date(client.StartDate).toLocaleDateString()}</td>
                         <td>${client.Email}</td>
                         <td>${client.PhoneNumber}</td>
-                        <td>${client.AssignedCoachID}</td>
+                        <td>${coachName}</td>
                         <td>${client.NPID}</td>
                         <td>${client.TPID}</td>
                         <td>${client.MembershipStatus}</td>
@@ -147,7 +154,7 @@
                     });
                     if (response.ok) {
                         alert("Client deleted successfully!");
-                        window.location.reload(); // Refresh the page to update the table
+                        window.location.reload();
                     } else {
                         alert("Error deleting client.");
                     }
@@ -158,7 +165,7 @@
             }
         }
 
-        // Function to edit a client (redirect to an edit page)
+        // Function to edit a client
         function editClient(clientID) {
             window.location.href = `edit-client.html?clientID=${clientID}`;
         }

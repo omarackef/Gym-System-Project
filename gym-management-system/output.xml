@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.1.1 (Python 3.10.9 on win32)" generated="2025-01-08T21:24:14.880478" rpa="false" schemaversion="5">
+<suite id="s1" name="Delete Client Test" source="C:\Users\omar ackef\Desktop\gym-management-system\delete_client_test.robot">
+<kw name="Open Browser To Login Page" type="SETUP">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2025-01-08T21:24:15.095771" level="INFO">Opening browser 'Chrome' to base url 'file:///C:/Users/omar%20ackef/Desktop/gym-management-system/index.html'.</msg>
+<arg>${LOGIN_URL}</arg>
+<arg>${BROWSER}</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2025-01-08T21:24:15.094771" elapsed="1.288104"/>
+</kw>
+<kw name="Maximize Browser Window" owner="SeleniumLibrary">
+<doc>Maximizes current browser window.</doc>
+<status status="PASS" start="2025-01-08T21:24:16.383869" elapsed="0.032602"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-01-08T21:24:17.419513" level="INFO">Slept 1 second.</msg>
+<arg>${DELAY}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-01-08T21:24:16.416471" elapsed="1.003042"/>
+</kw>
+<status status="PASS" start="2025-01-08T21:24:15.094771" elapsed="2.324742"/>
+</kw>
+<test id="s1-t1" name="Delete Client" line="14">
+<kw name="Go To Login Page">
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-01-08T21:24:17.420673" level="INFO">Clicking element 'xpath=//button[contains(text(), 'Login')]'.</msg>
+<arg>xpath=//button[contains(text(), 'Login')]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-01-08T21:24:17.420673" elapsed="0.058032"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-01-08T21:24:18.480155" level="INFO">Slept 1 second.</msg>
+<arg>${DELAY}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-01-08T21:24:17.479706" elapsed="1.000449"/>
+</kw>
+<status status="PASS" start="2025-01-08T21:24:17.420673" elapsed="1.059482"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-01-08T21:24:19.495690" level="INFO">Slept 1 second.</msg>
+<arg>${DELAY}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-01-08T21:24:18.480155" elapsed="1.015535"/>
+</kw>
+<kw name="Login As Admin">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//button[contains(text(), 'Admin')]</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-01-08T21:24:19.496716" elapsed="0.015904"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-01-08T21:24:19.513621" level="INFO">Clicking element 'xpath=//button[contains(text(), 'Admin')]'.</msg>
+<arg>xpath=//button[contains(text(), 'Admin')]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-01-08T21:24:19.512620" elapsed="0.051577"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-01-08T21:24:20.572701" level="INFO">Slept 1 second.</msg>
+<arg>${DELAY}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-01-08T21:24:19.564197" elapsed="1.008504"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-01-08T21:24:20.573710" level="INFO">Typing text 'omar' into text field 'id=username'.</msg>
+<arg>id=username</arg>
+<arg>${ADMIN_USERNAME}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-01-08T21:24:20.572701" elapsed="0.067944"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-01-08T21:24:21.647804" level="INFO">Slept 1 second.</msg>
+<arg>${DELAY}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-01-08T21:24:20.640645" elapsed="1.007159"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-01-08T21:24:21.647804" level="INFO">Typing text 'omar' into text field 'id=password'.</msg>
+<arg>id=password</arg>
+<arg>${ADMIN_PASSWORD}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-01-08T21:24:21.647804" elapsed="0.054554"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-01-08T21:24:22.708659" level="INFO">Slept 1 second.</msg>
+<arg>${DELAY}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-01-08T21:24:21.702358" elapsed="1.006942"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-01-08T21:24:22.709300" level="INFO">Clicking element 'xpath=//button[contains(text(), 'Login')]'.</msg>
+<arg>xpath=//button[contains(text(), 'Login')]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-01-08T21:24:22.709300" elapsed="0.036321"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-01-08T21:24:23.747447" level="INFO">Slept 1 second.</msg>
+<arg>${DELAY}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-01-08T21:24:22.745621" elapsed="1.001826"/>
+</kw>
+<status status="PASS" start="2025-01-08T21:24:19.496716" elapsed="4.250731"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-01-08T21:24:24.752927" level="INFO">Slept 1 second.</msg>
+<arg>${DELAY}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-01-08T21:24:23.748254" elapsed="1.004673"/>
+</kw>
+<kw name="Navigate To Manage Clients Page">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//button[contains(text(), 'Manage Client Profiles')]</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-01-08T21:24:24.753902" elapsed="0.014205"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-01-08T21:24:24.768107" level="INFO">Clicking element 'xpath=//button[contains(text(), 'Manage Client Profiles')]'.</msg>
+<arg>xpath=//button[contains(text(), 'Manage Client Profiles')]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-01-08T21:24:24.768107" elapsed="0.051322"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-01-08T21:24:25.829916" level="INFO">Slept 1 second.</msg>
+<arg>${DELAY}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-01-08T21:24:24.819429" elapsed="1.010487"/>
+</kw>
+<status status="PASS" start="2025-01-08T21:24:24.753902" elapsed="1.076014"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-01-08T21:24:26.845346" level="INFO">Slept 1 second.</msg>
+<arg>${DELAY}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-01-08T21:24:25.830943" elapsed="1.014403"/>
+</kw>
+<kw name="Scroll To Right To Reveal Delete Button">
+<kw name="Execute Javascript" owner="SeleniumLibrary">
+<msg time="2025-01-08T21:24:26.846345" level="INFO">Executing JavaScript:
+window.scrollTo(500, 0)
+Without any arguments.</msg>
+<arg>window.scrollTo(500, 0)</arg>
+<doc>Executes the given JavaScript code with possible arguments.</doc>
+<status status="PASS" start="2025-01-08T21:24:26.846345" elapsed="0.004004"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-01-08T21:24:27.863079" level="INFO">Slept 1 second.</msg>
+<arg>${DELAY}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-01-08T21:24:26.850349" elapsed="1.012730"/>
+</kw>
+<status status="PASS" start="2025-01-08T21:24:26.845346" elapsed="1.017733"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-01-08T21:24:28.870691" level="INFO">Slept 1 second.</msg>
+<arg>${DELAY}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-01-08T21:24:27.863793" elapsed="1.006898"/>
+</kw>
+<kw name="Delete First Client">
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//tr[1]//button[contains(text(), 'Delete')]</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-01-08T21:24:28.871690" elapsed="0.017001"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-01-08T21:24:28.888691" level="INFO">Clicking element 'xpath=//tr[1]//button[contains(text(), 'Delete')]'.</msg>
+<arg>xpath=//tr[1]//button[contains(text(), 'Delete')]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-01-08T21:24:28.888691" elapsed="0.061046"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-01-08T21:24:29.954689" level="INFO">Slept 1 second.</msg>
+<arg>${DELAY}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-01-08T21:24:28.949737" elapsed="1.004952"/>
+</kw>
+<kw name="Handle Alert" owner="SeleniumLibrary">
+<msg time="2025-01-08T21:24:29.954689" level="INFO">HANDLE::&lt;class 'NoneType'&gt;::None</msg>
+<arg>action=ACCEPT</arg>
+<doc>Handles the current alert and returns its message.</doc>
+<status status="PASS" start="2025-01-08T21:24:29.954689" elapsed="0.003001"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-01-08T21:24:30.967684" level="INFO">Slept 1 second.</msg>
+<arg>${DELAY}</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-01-08T21:24:29.958693" elapsed="1.008991"/>
+</kw>
+<status status="PASS" start="2025-01-08T21:24:28.870691" elapsed="2.096993"/>
+</kw>
+<status status="PASS" start="2025-01-08T21:24:17.419513" elapsed="13.549170"/>
+</test>
+<kw name="Close Browser" owner="SeleniumLibrary" type="TEARDOWN">
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-01-08T21:24:30.969682" elapsed="2.142106"/>
+</kw>
+<status status="PASS" start="2025-01-08T21:24:14.881477" elapsed="18.230311"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="1" fail="0" skip="0" id="s1" name="Delete Client Test">Delete Client Test</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

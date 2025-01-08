@@ -26,8 +26,10 @@
             <input type="email" id="email" required>
             <label for="phoneNumber">Phone Number:</label>
             <input type="text" id="phoneNumber" required>
-            <label for="assignedCoachID">Assigned Coach ID:</label>
-            <input type="number" id="assignedCoachID" required>
+            <label for="assignedCoachID">Assigned Coach:</label>
+            <select id="assignedCoachID" required>
+                <!-- Options will be dynamically populated -->
+            </select>
             <label for="npID">Nutrition Plan ID:</label>
             <input type="number" id="npID" required>
             <label for="tpID">Training Plan ID:</label>
@@ -48,12 +50,13 @@
             }
 
             try {
-                const response = await fetch(`http://localhost:5000/clients/${clientID}`);
-                if (!response.ok) {
-                    throw new Error("Failed to fetch client data.");
-                }
+                // Fetch client data from the server
+                const clientResponse = await fetch(`http://localhost:5000/clients/${clientID}`);
+                const client = await clientResponse.json();
 
-                const client = await response.json();
+                // Fetch coach data from the server
+                const coachesResponse = await fetch("http://localhost:5000/coaches");
+                const coaches = await coachesResponse.json();
 
                 // Populate the form with client data
                 document.getElementById("firstName").value = client.FirstName;
@@ -63,54 +66,68 @@
                 document.getElementById("startDate").value = new Date(client.StartDate).toISOString().split('T')[0];
                 document.getElementById("email").value = client.Email;
                 document.getElementById("phoneNumber").value = client.PhoneNumber;
-                document.getElementById("assignedCoachID").value = client.AssignedCoachID;
                 document.getElementById("npID").value = client.NPID;
                 document.getElementById("tpID").value = client.TPID;
                 document.getElementById("membershipStatus").value = client.MembershipStatus;
+
+                // Populate the coach dropdown
+                const coachDropdown = document.getElementById("assignedCoachID");
+                coaches.forEach(coach => {
+                    const option = document.createElement("option");
+                    option.value = coach.CoachID; // Set the value to the CoachID
+                    option.textContent = `${coach.FirstName} ${coach.LastName}`; // Display the coach's name
+                    if (coach.CoachID === client.AssignedCoachID) {
+                        option.selected = true; // Select the current assigned coach
+                    }
+                    coachDropdown.appendChild(option);
+                });
+
+                // Handle form submission
+                const editForm = document.getElementById("edit-client-form");
+                if (editForm) {
+                    editForm.addEventListener("submit", async (e) => {
+                        e.preventDefault();
+
+                        // Gather updated client data from the form
+                        const updatedClient = {
+                            firstName: document.getElementById("firstName").value,
+                            lastName: document.getElementById("lastName").value,
+                            age: document.getElementById("age").value,
+                            gender: document.getElementById("gender").value,
+                            startDate: document.getElementById("startDate").value,
+                            email: document.getElementById("email").value,
+                            phoneNumber: document.getElementById("phoneNumber").value,
+                            assignedCoachID: document.getElementById("assignedCoachID").value, // Get the selected coach's ID
+                            npID: document.getElementById("npID").value,
+                            tpID: document.getElementById("tpID").value,
+                            membershipStatus: document.getElementById("membershipStatus").value,
+                        };
+
+                        try {
+                            // Send the updated client data to the server
+                            const response = await fetch(`http://localhost:5000/clients/${clientID}`, {
+                                method: "PUT",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(updatedClient),
+                            });
+
+                            if (response.ok) {
+                                alert("Client updated successfully!");
+                                window.location.href = "manage-clients.html"; // Redirect to the manage clients page
+                            } else {
+                                alert("Error updating client.");
+                            }
+                        } catch (err) {
+                            console.error("Error updating client:", err);
+                            alert("Error updating client. Please try again.");
+                        }
+                    });
+                }
             } catch (err) {
                 console.error("Error fetching client data:", err);
                 alert("Error fetching client data. Please try again.");
-            }
-
-            // Handle form submission
-            const editForm = document.getElementById("edit-client-form");
-            if (editForm) {
-                editForm.addEventListener("submit", async (e) => {
-                    e.preventDefault();
-                    const updatedClient = {
-                        firstName: document.getElementById("firstName").value,
-                        lastName: document.getElementById("lastName").value,
-                        age: document.getElementById("age").value,
-                        gender: document.getElementById("gender").value,
-                        startDate: document.getElementById("startDate").value,
-                        email: document.getElementById("email").value,
-                        phoneNumber: document.getElementById("phoneNumber").value,
-                        assignedCoachID: document.getElementById("assignedCoachID").value,
-                        npID: document.getElementById("npID").value,
-                        tpID: document.getElementById("tpID").value,
-                        membershipStatus: document.getElementById("membershipStatus").value,
-                    };
-
-                    try {
-                        const response = await fetch(`http://localhost:5000/clients/${clientID}`, {
-                            method: "PUT",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify(updatedClient),
-                        });
-
-                        if (response.ok) {
-                            alert("Client updated successfully!");
-                            window.location.href = "manage-clients.html";
-                        } else {
-                            alert("Error updating client.");
-                        }
-                    } catch (err) {
-                        console.error("Error updating client:", err);
-                        alert("Error updating client. Please try again.");
-                    }
-                });
             }
         });
     </script>

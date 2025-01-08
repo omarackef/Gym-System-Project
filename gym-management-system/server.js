@@ -40,7 +40,7 @@ app.get("/clients", async (req, res) => {
         res.json(result.recordset);
     } catch (err) {
         console.error("Error fetching clients:", err);
-        res.status(500).send("Error fetching clients.");
+        res.status(500).json({ success: false, message: "Error fetching clients." });
     } finally {
         sql.close();
     }
@@ -60,56 +60,80 @@ app.get("/clients/:clientID", async (req, res) => {
         if (result.recordset.length > 0) {
             res.json(result.recordset[0]);
         } else {
-            res.status(404).send("Client not found.");
+            res.status(404).json({ success: false, message: "Client not found." });
         }
     } catch (err) {
         console.error("Error fetching client:", err);
-        res.status(500).send("Error fetching client.");
+        res.status(500).json({ success: false, message: "Error fetching client." });
     } finally {
         sql.close();
     }
 });
 
-// Update a client
+// Update a client's details (supports full updates)
 app.put("/clients/:clientID", async (req, res) => {
     const clientID = req.params.clientID;
-    const updatedClient = req.body;
+    const updates = req.body; // Extract all fields from the request body
 
     try {
         await sql.connect(config);
         const request = new sql.Request();
-        const query = `
-            UPDATE Clients
-            SET FirstName = @firstName,
-                LastName = @lastName,
-                Age = @age,
-                Gender = @gender,
-                StartDate = @startDate,
-                Email = @email,
-                PhoneNumber = @phoneNumber,
-                AssignedCoachID = @assignedCoachID,
-                NPID = @npID,
-                TPID = @tpID,
-                MembershipStatus = @membershipStatus
-            WHERE ClientID = @clientID
-        `;
+
+        // Build the SQL query dynamically based on the fields provided in the request
+        let query = `UPDATE Clients SET `;
+        const updateFields = [];
+
+        for (const [key, value] of Object.entries(updates)) {
+            if (value !== undefined) {
+                updateFields.push(`${key} = @${key}`);
+                request.input(key, value);
+            }
+        }
+
+        if (updateFields.length === 0) {
+            return res.status(400).json({ success: false, message: "No fields to update." });
+        }
+
+        query += updateFields.join(", ") + ` WHERE ClientID = @clientID`;
         request.input("clientID", sql.Int, clientID);
-        request.input("firstName", sql.VarChar, updatedClient.firstName);
-        request.input("lastName", sql.VarChar, updatedClient.lastName);
-        request.input("age", sql.Int, updatedClient.age);
-        request.input("gender", sql.VarChar, updatedClient.gender);
-        request.input("startDate", sql.Date, updatedClient.startDate);
-        request.input("email", sql.VarChar, updatedClient.email);
-        request.input("phoneNumber", sql.VarChar, updatedClient.phoneNumber);
-        request.input("assignedCoachID", sql.Int, updatedClient.assignedCoachID);
-        request.input("npID", sql.Int, updatedClient.npID);
-        request.input("tpID", sql.Int, updatedClient.tpID);
-        request.input("membershipStatus", sql.VarChar, updatedClient.membershipStatus);
+
         await request.query(query);
-        res.send("Client updated successfully!");
+
+        res.json({ success: true, message: "Client updated successfully!" });
     } catch (err) {
         console.error("Error updating client:", err);
-        res.status(500).send("Error updating client.");
+        res.status(500).json({ success: false, message: "Error updating client." });
+    } finally {
+        sql.close();
+    }
+});
+
+// Update a client's training and nutrition plans (tpID and npID only)
+app.put("/clients/:clientID/plans", async (req, res) => {
+    const clientID = req.params.clientID;
+    const { tpID, npID } = req.body; // Only extract tpID and npID from the request body
+
+    try {
+        await sql.connect(config);
+        const request = new sql.Request();
+
+        // Build the SQL query to update only tpID and npID
+        const query = `
+            UPDATE Clients
+            SET TPID = @tpID, NPID = @npID
+            WHERE ClientID = @clientID
+        `;
+
+        request.input("tpID", sql.Int, tpID);
+        request.input("npID", sql.Int, npID);
+        request.input("clientID", sql.Int, clientID);
+
+        await request.query(query);
+
+        res.json({ success: true, message: "Client plans updated successfully!" });
+    } catch (err) {
+        console.error("Error updating client plans:", err);
+        res.status(500).json({ success: false, message: "Error updating client plans." });
     } finally {
         sql.close();
     }
@@ -127,13 +151,13 @@ app.delete("/clients/:clientID", async (req, res) => {
         const result = await request.query(query);
 
         if (result.rowsAffected[0] > 0) {
-            res.send("Client deleted successfully!");
+            res.json({ success: true, message: "Client deleted successfully!" });
         } else {
-            res.status(404).send("Client not found.");
+            res.status(404).json({ success: false, message: "Client not found." });
         }
     } catch (err) {
         console.error("Error deleting client:", err);
-        res.status(500).send("Error deleting client.");
+        res.status(500).json({ success: false, message: "Error deleting client." });
     } finally {
         sql.close();
     }
@@ -149,7 +173,7 @@ app.get("/coaches", async (req, res) => {
         res.json(result.recordset);
     } catch (err) {
         console.error("Error fetching coaches:", err);
-        res.status(500).send("Error fetching coaches.");
+        res.status(500).json({ success: false, message: "Error fetching coaches." });
     } finally {
         sql.close();
     }
@@ -165,7 +189,7 @@ app.get("/training-plans", async (req, res) => {
         res.json(result.recordset);
     } catch (err) {
         console.error("Error fetching training plans:", err);
-        res.status(500).send("Error fetching training plans.");
+        res.status(500).json({ success: false, message: "Error fetching training plans." });
     } finally {
         sql.close();
     }
@@ -190,11 +214,11 @@ app.get("/client-training-plan/:clientID", async (req, res) => {
         if (result.recordset.length > 0) {
             res.json(result.recordset[0]);
         } else {
-            res.status(404).send("Training plan not found for this client.");
+            res.status(404).json({ success: false, message: "Training plan not found for this client." });
         }
     } catch (err) {
         console.error("Error fetching training plan:", err);
-        res.status(500).send("Error fetching training plan.");
+        res.status(500).json({ success: false, message: "Error fetching training plan." });
     } finally {
         sql.close();
     }
@@ -210,7 +234,7 @@ app.get("/nutrition-plans", async (req, res) => {
         res.json(result.recordset);
     } catch (err) {
         console.error("Error fetching nutrition plans:", err);
-        res.status(500).send("Error fetching nutrition plans.");
+        res.status(500).json({ success: false, message: "Error fetching nutrition plans." });
     } finally {
         sql.close();
     }
@@ -235,11 +259,11 @@ app.get("/client-nutrition-plan/:clientID", async (req, res) => {
         if (result.recordset.length > 0) {
             res.json(result.recordset[0]);
         } else {
-            res.status(404).send("Nutrition plan not found for this client.");
+            res.status(404).json({ success: false, message: "Nutrition plan not found for this client." });
         }
     } catch (err) {
         console.error("Error fetching nutrition plan:", err);
-        res.status(500).send("Error fetching nutrition plan.");
+        res.status(500).json({ success: false, message: "Error fetching nutrition plan." });
     } finally {
         sql.close();
     }
@@ -259,10 +283,10 @@ app.put("/cancel-membership/:clientID", async (req, res) => {
         `;
         request.input("clientID", sql.Int, clientID);
         await request.query(query);
-        res.send("Membership cancelled successfully!");
+        res.json({ success: true, message: "Membership cancelled successfully!" });
     } catch (err) {
         console.error("Error cancelling membership:", err);
-        res.status(500).send("Error cancelling membership.");
+        res.status(500).json({ success: false, message: "Error cancelling membership." });
     } finally {
         sql.close();
     }
@@ -282,10 +306,10 @@ app.put("/re-register/:clientID", async (req, res) => {
         `;
         request.input("clientID", sql.Int, clientID);
         await request.query(query);
-        res.send("Re-registration successful! Membership status set to Active.");
+        res.json({ success: true, message: "Re-registration successful! Membership status set to Active." });
     } catch (err) {
         console.error("Error re-registering:", err);
-        res.status(500).send("Error re-registering.");
+        res.status(500).json({ success: false, message: "Error re-registering." });
     } finally {
         sql.close();
     }
@@ -323,11 +347,11 @@ app.post("/login", async (req, res) => {
             });
         } else {
             // Credentials are invalid
-            res.json({ success: false });
+            res.json({ success: false, message: "Invalid username or password." });
         }
     } catch (err) {
         console.error("Error during login:", err);
-        res.status(500).json({ success: false });
+        res.status(500).json({ success: false, message: "Error during login." });
     } finally {
         sql.close();
     }
@@ -352,10 +376,10 @@ app.post("/signup/coach", async (req, res) => {
         request.input("username", sql.VarChar, username);
         request.input("password", sql.VarChar, password);
         await request.query(query);
-        res.status(201).send("Coach signed up successfully!");
+        res.status(201).json({ success: true, message: "Coach signed up successfully!" });
     } catch (err) {
         console.error("Error during sign-up:", err);
-        res.status(500).send("Error signing up coach.");
+        res.status(500).json({ success: false, message: "Error signing up coach." });
     } finally {
         sql.close();
     }
@@ -382,10 +406,10 @@ app.post("/signup/client", async (req, res) => {
         request.input("username", sql.VarChar, username);
         request.input("password", sql.VarChar, password);
         await request.query(query);
-        res.status(201).send("Client signed up successfully!");
+        res.status(201).json({ success: true, message: "Client signed up successfully!" });
     } catch (err) {
         console.error("Error during sign-up:", err);
-        res.status(500).send("Error signing up client.");
+        res.status(500).json({ success: false, message: "Error signing up client." });
     } finally {
         sql.close();
     }
